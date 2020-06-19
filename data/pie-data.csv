@@ -1,0 +1,28 @@
+Problem,Quality,ExperimentGroup,Percentage
+Rosenbrock,Best,3 Collaborators: best-worst-random,51.7
+Rosenbrock,Worst,3 Collaborators: best-worst-random,42.8
+Rosenbrock,Random,3 Collaborators: best-worst-random,5.5
+Rosenbrock,Best,2 Collaborators: best-worst,43.6
+Rosenbrock,Worst,2 Collaborators: best-worst,56.4
+Rosenbrock,Random,2 Collaborators: best-worst,0.00
+Rosenbrock,Best,2 Collaborators: best-random,40.9
+Rosenbrock,Worst,2 Collaborators: best-random,0.0
+Rosenbrock,Random,2 Collaborators: best-random,59.1
+Rastrigin,Best,3 Collaborators: best-worst-random,100
+Rastrigin,Worst,3 Collaborators: best-worst-random,0
+Rastrigin,Random,3 Collaborators: best-worst-random,0
+Rastrigin,Best,2 Collaborators: best-worst,100
+Rastrigin,Worst,2 Collaborators: best-worst,0
+Rastrigin,Random,2 Collaborators: best-worst,0
+Rastrigin,Best,2 Collaborators: best-random,100
+Rastrigin,Worst,2 Collaborators: best-random,0
+Rastrigin,Random,2 Collaborators: best-random,0
+Off-Axis Quadratic,Best,3 Collaborators: best-worst-random,97.7
+Off-Axis Quadratic,Worst,3 Collaborators: best-worst-random,2.25
+Off-Axis Quadratic,Random,3 Collaborators: best-worst-random,0.05
+Off-Axis Quadratic,Best,2 Collaborators: best-worst,100
+Off-Axis Quadratic,Worst,2 Collaborators: best-worst,0
+Off-Axis Quadratic,Random,2 Collaborators: best-worst,0
+Off-Axis Quadratic,Best,2 Collaborators: best-random,97.8
+Off-Axis Quadratic,Worst,2 Collaborators: best-random,0.02
+Off-Axis Quadratic,Random,2 Collaborators: best-random,2.18
