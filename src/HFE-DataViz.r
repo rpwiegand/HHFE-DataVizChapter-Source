@@ -396,6 +396,96 @@ preattentiveFeatures <- function(numPoints=30,
     ggsave(filename, width=8, height=6)
     system(paste('open',filename))
   }
-  
-  
 }
+
+
+badMarriageRateExample <- function(filename='./data/marriage-rates.csv',
+                                   outputPDF=F) {
+  # Read the marriage rate data and format it
+  marriage = read.csv(filename,header=T)
+  marriage = mutate(marriage,
+                  Year=factor(Year,
+                              levels=c(2008,2009,2010,2011,2012), 
+                              ordered=T),
+                  Education=factor(Education, 
+                                   levels=c("ltHS","HS","SomeCol","gtCol"), 
+                                   ordered=T))
+  
+  # Create the labels we'll use on the axis
+  myLabels=c("Less than\nhigh school", 
+             "High school\ngraduate", 
+             "Some\ncollege", 
+             "Bachelor's\ndegree or\nmore")
+
+  p <- ggplot(marriage, aes(x=Education, 
+                            y=NewMarriageRate, 
+                            fill=Year)) +
+    scale_fill_brewer(palette="Set1", name="") +
+    scale_x_discrete(labels=myLabels) +
+    geom_bar(stat="identity", position="dodge", color="white") +
+    ylab("") + ggtitle("New Marriage Rate By Education") +
+    theme_bw() +
+    theme(text=element_text(family="Times", size=16),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          panel.background = element_blank())
+  
+  # Produce the plot in RStudio
+  print(p)
+  
+  # If the caller wants to produce a PDF, do so
+  if (outputPDF) {
+    filename = './figures/sect3-badmarriagerate.pdf'
+    ggsave(filename, width=8, height=6)
+    system(paste('open',filename))
+  }
+}
+
+
+betterMarriageRateExample <- function(filename='./data/marriage-rates.csv',
+                                   outputPDF=F) {
+  # Read the marriage rate data and format it
+  marriage = read.csv(filename,header=T)
+  marriage = mutate(marriage,
+                    Year=factor(Year,
+                                levels=c(2008,2009,2010,2011,2012), 
+                                ordered=T),
+                    Education=factor(Education, 
+                                     levels=c("ltHS","HS","SomeCol","gtCol"), 
+                                     ordered=T))
+  
+  # Create the labels we'll use on the axis
+  myLabels=c("Less than\nhigh school", 
+             "High school\ngraduate", 
+             "Some\ncollege", 
+             "Bachelor's\ndegree or\nmore")
+  
+  # Create a special pallete to highlight the bars we like.
+  myPalette=c(rep("darkgray",3),"darkgoldenrod")
+  
+  p<- ggplot(marriage, aes(x=Year, 
+                           y=NewMarriageRate, 
+                           fill=Education)) +
+    scale_fill_manual(values=myPalette, labels=myLabels, name="") +
+    #scale_x_discrete(labels=myLabels) +
+    geom_bar(stat="identity", position="dodge", color="white") +
+    ylab("") + ggtitle("New Marriage Rate By Education") +
+    theme_bw() +
+    theme(text=element_text(family="Times", size=16),
+          legend.position = "bottom",
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          panel.background = element_blank())
+  # Produce the plot in RStudio
+  print(p)
+  
+  # If the caller wants to produce a PDF, do so
+  if (outputPDF) {
+    filename = './figures/sect3-bettermarriagerate.pdf'
+    ggsave(filename, width=8, height=6)
+    system(paste('open',filename))
+  }
+}
+
