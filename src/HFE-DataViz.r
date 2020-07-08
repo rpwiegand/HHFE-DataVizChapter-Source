@@ -10,7 +10,7 @@
 library(ggplot2)
 library(RColorBrewer)
 library(dplyr)
-library(plyr)
+#library(plyr)
 library(reshape2)
 library(MASS)
 
@@ -444,7 +444,7 @@ badMarriageRateExample <- function(filename='./data/marriage-rates.csv',
 
 
 betterMarriageRateExample <- function(filename='./data/marriage-rates.csv',
-                                   outputPDF=F) {
+                                      outputPDF=F) {
   # Read the marriage rate data and format it
   marriage = read.csv(filename,header=T)
   marriage = mutate(marriage,
@@ -489,3 +489,279 @@ betterMarriageRateExample <- function(filename='./data/marriage-rates.csv',
   }
 }
 
+
+positionClevelandEg <- function(outputPDF=F) {
+  # Use the UScereal dataset from R's MASS library
+  UScereal$brand <- rownames(UScereal)
+  
+  # Create the dot plot
+  p <- ggplot(subset(UScereal,sugars>15), aes(y=reorder(brand,sugars), x=sugars)) + 
+    geom_point(size=4) +  
+    xlab("Amount of Sugar per Serving (grams)") +
+    ylab("Cereal Brand") +
+    ggtitle("High Sugar Content US Cereal") +
+    theme(text=element_text(size=16, family="Times"))
+  
+  # Produce the plot in RStudio
+  print(p)
+  
+  # If the caller wants to produce a PDF, do so
+  if (outputPDF) {
+    filename = './figures/sect3-positioncleveland.pdf'
+    ggsave(filename, width=8, height=6)
+    system(paste('open',filename))
+  }
+}
+
+
+lengthClevelandEg <- function(outputPDF=F) {
+  # Makeup some fake data to demonstrate this
+  dat <- data.frame(Student=c("Jerry","Phil","Bruce","Micky","Robert"),
+                    Position=c(3,5,4.1,4.3,2.8),
+                    Width=c(3.1,3.0,2.9,2.7,2.5),
+                    Compare=c("Longest","Middle","Middle","Middle","Shortest"))
+  
+  # Create the point-and-whisker plot.
+  p <- ggplot(dat, aes(x=Student, y=Position)) + 
+    geom_point(size=5) +
+    geom_errorbar(aes(ymin=Position-Width/2, ymax=Position+Width/2), width=.4) +
+    ylab("Average Quiz Performance") +
+    #ggtitle("Which line is longest?  Which is shortest?  By how much?") +
+    ggtitle("Performance Results on 8-point Quizes") +
+    theme(text=element_text(size=15, family="Times"))
+  
+  # Produce the plot in RStudio
+  print(p)
+  
+  # If the caller wants to produce a PDF, do so
+  if (outputPDF) {
+    filename = './figures/sect3-lengthcleveland.pdf'
+    ggsave(filename, width=8, height=6)
+    system(paste('open',filename))
+  }
+}
+
+
+arcClevelandEg <- function(outputPDF=F) {
+  # Makeup some fake data to demonstrate this
+  grades <- data.frame(Grade=c("A","B","C","D","F"),
+                       Count=c(9,10,9,3,2))
+  grades$ymax = cumsum(grades$Count)
+  grades$ymin = c(0, head(grades$ymax, n=-1))
+
+  # Create donut plot
+  p <- ggplot(grades, aes(x=factor(1), y=Count, fill=Grade, ymax=ymax, ymin=ymin, xmax=4, xmin=3)) + 
+    geom_rect() +
+    coord_polar(theta="y") +  
+    scale_fill_brewer(palette = "Set1") +
+    scale_y_continuous(breaks=seq(from=0,to=35,by=5)) +
+    xlab("") + ylab("") + ggtitle("More As, Bs, or Cs?") +
+    theme(text=element_text(size=18, family="Times"),
+          axis.text.y = element_blank(), 
+          axis.ticks = element_blank(), 
+          axis.title.x = element_blank())
+  
+  # Produce the plot in RStudio
+  print(p)
+  
+  # If the caller wants to produce a PDF, do so
+  if (outputPDF) {
+    filename = './figures/sect3-arccleveland.pdf'
+    ggsave(filename, width=4, height=3)
+    system(paste('open',filename))
+  }
+}
+
+
+
+altarcClevelandEg <- function(outputPDF=F) {
+  # Makeup some fake data to demonstrate this
+  grades <- data.frame(Grade=c("A","B","C","D","F"),
+                       Count=c(9,10,9,3,2))
+  grades$ymax = cumsum(grades$Count)
+  grades$ymin = c(0, head(grades$ymax, n=-1))
+  
+  # Create donut plot
+  p <- ggplot(grades, aes(x=Grade, y=Count)) + 
+    geom_bar(stat="identity") +
+    scale_fill_brewer(palette = "Set1") +
+    #scale_y_continuous(breaks=seq(from=0,to=35,by=5)) +
+    #xlab("") + ylab("") + 
+    ggtitle("More As, Bs, or Cs?") +
+    theme(text=element_text(size=18, family="Times"),
+          axis.title.x = element_blank())
+  
+  # Produce the plot in RStudio
+  print(p)
+  
+  # If the caller wants to produce a PDF, do so
+  if (outputPDF) {
+    filename = './figures/sect3-altarccleveland.pdf'
+    ggsave(filename, width=4, height=3)
+    system(paste('open',filename))
+  }
+}
+
+
+barplotBaselineExampleGood <- function(filename='./data/bls-welfare-Q109-Q311.csv',
+                                       outputPDF=F) {
+  # Read the marriage rate data and format it
+  welfare <- arrange(read.csv(filename,header=T), QuarterNum)
+
+  p <- ggplot(welfare, aes(y=Dollars, x=QuarterStr)) +
+    geom_bar(stat="identity") +
+    ylab("Federal Welfare Received ($M)") +
+    xlab("") +
+    theme(text=element_text(size=12, family="Times"),
+          axis.title.x = element_blank())    
+  
+  # Produce the plot in RStudio
+  print(p)
+  
+  # If the caller wants to produce a PDF, do so
+  if (outputPDF) {
+    filename = './figures/sect3-blswelfaregood.pdf'
+    ggsave(filename, width=6, height=2.5)
+    system(paste('open',filename))
+  }
+}
+
+
+barplotBaselineExampleBad <- function(filename='./data/bls-welfare-Q109-Q311.csv',
+                                      outputPDF=F) {
+  # Read the marriage rate data and format it
+  welfare <- arrange(read.csv(filename,header=T), QuarterNum)
+  
+  p <- ggplot(welfare, aes(y=Dollars-94, x=QuarterStr)) +
+    geom_bar(stat="identity") +
+    ylab("Federal Welfare Received ($M)") +
+    xlab("") +
+    scale_y_continuous(breaks=seq(from=0, to=12, by=2),
+                       labels=seq(from=94, to=106, by=2)) +
+    theme(text=element_text(size=12, family="Times"),
+          axis.title.x = element_blank())    
+  
+  # Produce the plot in RStudio
+  print(p)
+  
+  # If the caller wants to produce a PDF, do so
+  if (outputPDF) {
+    filename = './figures/sect3-blswelfarebad.pdf'
+    ggsave(filename, width=6, height=2.5)
+    system(paste('open',filename))
+  }
+}
+
+
+
+
+barplotClearGridlines <- function(filename='./data/iouzipcodes2011.csv',
+                                      outputPDF=F) {
+  # Load the data from the website, ignore the first few commented lines
+  energy.raw <- read.csv(filename, comment.char="#")
+  
+  # Just look at Florida companies
+  energy.Florida <- dplyr::filter(energy.raw, state=="FL")
+
+  # Summarize the average residential, commercial, and industry rates
+  rateSummaries <- dplyr::summarise(dplyr::group_by(energy.Florida, utility_name),
+                             Residential = mean(res_rate),
+                             Commercial = mean(comm_rate),
+                             Industry = mean(ind_rate))
+
+  # Get the levels of the utilities factor, in order of residential rates
+  utilityLevels <- arrange(rateSummaries, Residential)$utility_name
+  
+  # Put this in statistical long form so each rate is on a separate line
+  rateSummaries.long <- melt(rateSummaries, value.name="Rate", variable.name ="Type")
+  
+  # Re-work the Utility factor so it is ordered by residential rates, highlight the lowest
+  rateSummaries.long <- mutate(rateSummaries.long, 
+                               Utility = factor(utility_name, levels=utilityLevels, ordered=T),
+                               Highlight = utility_name == utilityLevels[1])
+  
+  
+  # Produced the trellised plot, arranged by residential rate and highlighting the lowest
+  p <- ggplot(rateSummaries.long, aes(x=Utility, y=Rate)) + #, fill=Highlight)) +
+    geom_bar(stat="identity") +
+    geom_hline(yintercept=seq(from=0, to=0.15, by=0.025), color="white") +
+    scale_fill_manual(values=c("gray45", "goldenrod")) +
+    coord_flip() +
+    facet_grid(Type ~ .) +
+    xlab("") +
+    ylab("Rate ($/hr)") +
+    ggtitle("Energy Costs for FL\nPower Companies") +
+    theme_bw() +
+    theme(text=element_text(family="Times", size=12),
+          legend.position = "none",
+          panel.spacing = unit(1.5, "lines"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank(),
+          panel.border = element_blank()) 
+  
+  # Produce the plot in RStudio
+  print(p)
+  
+  # If the caller wants to produce a PDF, do so
+  if (outputPDF) {
+    filename = './figures/sect3-barplotcleargrid.pdf'
+    ggsave(filename, width=3.5, height=5)
+    system(paste('open',filename))
+  }
+}
+
+
+
+scatterplotDistractingGridlines <- function(filename='./data/iouzipcodes2011.csv',
+                                            outputPDF=F) {
+  # Load the data from the website, ignore the first few commented lines
+  energy.raw <- read.csv(filename, comment.char="#")
+  
+  # Just look at Florida companies
+  energy.Florida <- dplyr::filter(energy.raw, state=="FL")
+  
+  # Summarize the average residential, commercial, and industry rates
+  rateSummaries <- dplyr::summarise(dplyr::group_by(energy.Florida, utility_name),
+                                    Residential = mean(res_rate),
+                                    Commercial = mean(comm_rate),
+                                    Industry = mean(ind_rate))
+  
+  # Get the levels of the utilities factor, in order of residential rates
+  utilityLevels <- arrange(rateSummaries, Residential)$utility_name
+  
+  # Put this in statistical long form so each rate is on a separate line
+  rateSummaries.long <- melt(rateSummaries, value.name="Rate", variable.name ="Type")
+  
+  # Re-work the Utility factor so it is ordered by residential rates, highlight the lowest
+  rateSummaries.long <- mutate(rateSummaries.long, 
+                               Utility = factor(utility_name, levels=utilityLevels, ordered=T),
+                               Highlight = utility_name == utilityLevels[1])
+  
+  
+  # Produced the trellised plot, arranged by residential rate and highlighting the lowest
+  p <- ggplot(rateSummaries.long, aes(x=Utility, y=Rate, fill=Highlight)) +
+    geom_point(size=2, color="gray45") +
+    coord_flip() +
+    facet_grid(Type ~ .) +
+    xlab("") +
+    ylab("Rate ($/hr)") +
+    ggtitle("Energy Costs for FL\nPower Companies") +
+    theme_bw() +
+    theme(text=element_text(family="Times", size=12),
+          legend.position = "none",
+          panel.spacing = unit(1.5, "lines"),
+          panel.grid.major = element_line(size = 0.75, color="darkblue"),
+          panel.grid.minor = element_line(size = 0.5, color="darkblue"),
+          panel.background = element_blank()) 
+  
+  # Produce the plot in RStudio
+  print(p)
+  
+  # If the caller wants to produce a PDF, do so
+  if (outputPDF) {
+    filename = './figures/sect3-scatterplotclutteredgrid.pdf'
+    ggsave(filename, width=3.5, height=5)
+    system(paste('open',filename))
+  }
+}
