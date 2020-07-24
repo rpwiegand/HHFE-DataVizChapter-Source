@@ -462,7 +462,7 @@ betterMarriageRateExample <- function(filename='./data/marriage-rates.csv',
              "Bachelor's\ndegree or\nmore")
   
   # Create a special pallete to highlight the bars we like.
-  myPalette=c(rep("darkgray",3),"darkgoldenrod")
+  myPalette=c(brewer.pal(5, "Greys")[2:4],"darkgoldenrod")
   
   p<- ggplot(marriage, aes(x=Year, 
                            y=NewMarriageRate, 
