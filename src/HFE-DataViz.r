@@ -10,9 +10,10 @@
 library(ggplot2)
 library(RColorBrewer)
 library(dplyr)
-#library(plyr)
+library(plyr)
 library(reshape2)
 library(MASS)
+library(gridExtra)
 
 
 # ------------------------------------------------------------------
@@ -89,8 +90,8 @@ generatePAFeatures <- function(numPoints, feature) {
                         ordered=T)
   
   # Initialize each of the features to be all one thing
-  Color <- factor(rep("A", numPoints), levels=c("A","B"), ordered=T)
-  Shape <- factor(rep("A", numPoints), levels=c("A","B"), ordered=T)
+  Color <- factor(rep("A", numPoints), levels=c("A","B","C","D"), ordered=T)
+  Shape <- factor(rep("A", numPoints), levels=c("A","B","C","D"), ordered=T)
   Size  <- factor(rep("A", numPoints), levels=c("A","B"), ordered=T)
   
   # Feature-specific override
@@ -106,11 +107,10 @@ generatePAFeatures <- function(numPoints, feature) {
   # If Color+Shape, fill first half of colors with B, second
   # half of shapes with B, then make sure precisely 1 is B in both.
   else {
-    lowerRange <- 1:floor(numPoints/2)
-    upperRange <- (floor(numPoints/2)+1):numPoints
-    Color[lowerRange] <- "B"
-    Shape[upperRange] <- "B"
-    Shape[1] <- "B"
+    Color <- sample(c("A","B","C", "D"), numPoints, replace=T)
+    Shape <- sample(c("A","B","C"), numPoints, replace=T)
+    Color[1] <- "A"
+    Shape[1] <- "D"
   }
 
   return(data.frame(XPosition, YPosition, FeatureType, Color, Shape, Size))
@@ -128,11 +128,11 @@ makeDLTimeSeriesHeatmapPlot <- function(dataFilename="./data/88.csv",
   dataset <- getDLTimeSeriesData(dataFilename)
   p <- ggplot(dataset, aes(CaseID, MethodAndClass)) +
     geom_tile(aes(fill=factor(Rank)), color="white") +
-    scale_fill_manual(values=c("steelblue","gray","firebrick"),
+    scale_fill_manual(values=c("darkgray","lightgray","firebrick"),
                       name="",
-                      labels=c("Best", "Middle", "Worst"),
+                      labels=c("Best", "Median", "Worst"),
                       guide = guide_legend(reverse = TRUE) ) +
-    geom_hline(yintercept=c(3.5,6.5,9.5), size=1, color="white") +
+    geom_hline(yintercept=c(3.5,6.5,9.5), size=2, color="white") +
     ylab("") + xlab("Sensors") +
     theme_bw() +
     theme(text=element_text(family="Times", size=24),
@@ -170,13 +170,18 @@ compareSSNNamesSexFixedAreaPlot <- function(filename='./data/ssnNames.csv',
   
   p <- ggplot(nameData, aes(x=yob, y=count, fill=sex)) + 
     geom_hline(yintercept=0.5, size=0.75, color="darkgray") +
-    geom_area(position='fill', alpha=0.4) +
-    scale_fill_brewer(palette="Set1", name="Sex") +
+    geom_area(position='fill') +
+    scale_fill_manual(values=c("lightgoldenrod", rgb(75/255,194/255,128/255)), name="Sex") +
     scale_x_continuous(breaks=yearBreaks) +
     xlab("Year of Birth") +
     ylab(paste("Ratio of Babies with the Name",babyName)) +
     ggtitle(paste("Men vs. Women Named ",babyName, ", 1910-2018", sep='')) +
-    theme(text=element_text(family="Times", size=22)) +
+    theme_bw() + 
+    theme(text=element_text(family="Times", size=22),
+          axis.text.y=element_blank(),
+          axis.ticks.y=element_blank(),
+          panel.border = element_blank(), 
+          panel.grid.major = element_blank()) +
     annotate("segment", x=1992.5, y=0.5, xend=2000, yend=0.6) + 
     annotate("text",x=2000,y=0.6, hjust=0, size=6, label="Born 1992")
   
@@ -212,11 +217,12 @@ compareSSNNamesSexCountLinePlot <- function(filename='./data/ssnNames.csv',
   
   p <- ggplot(nameData, aes(x=yob, y=count, color=sex)) + 
     geom_line(size=1.5) +
-    scale_color_brewer(palette="Set1", name="Sex") +
+    scale_color_manual(values=c("goldenrod", "seagreen"), name="Sex") +
     scale_x_continuous(breaks=yearBreaks) +
     xlab("Year of Birth") +
     ylab(paste("Number of Babies with the Name",babyName)) +
     ggtitle(paste("The Rise of Women Named ", babyName, ", 1910-2018",sep='')) +
+    theme_bw() +
     theme(text=element_text(family="Times", size=18))
   
   # Produce the plot in RStudio, if the user wants
@@ -294,9 +300,9 @@ smallmultSSNNamesSexFixedAreaPlot <- function(filename='./data/ssnNames.csv',
     geom_hline(yintercept=0.5, size=0.5, color="gray") +
     geom_vline(xintercept=1980, size=0.75, linetype='dotted', color="darkgray") +
     geom_vline(xintercept=2000, size=0.75, linetype='dotted', color="darkgray") +
-    geom_area(position='fill', alpha=0.4) +
+    geom_area(position='fill') +
     facet_wrap(name ~ .) +
-    scale_fill_brewer(palette="Set1", name="Sex") +
+    scale_fill_manual(values=c("lightgoldenrod", rgb(75/255,194/255,128/255)), name="Sex") +
     scale_x_continuous(breaks=yearBreaks) +
     xlab("") +
     ylab("") +
@@ -372,8 +378,8 @@ preattentiveFeatures <- function(numPoints=30,
   p <- ggplot(psDataset, aes(x=XPosition, y=YPosition, 
                              color=Color, shape=Shape, size=Size)) +
     geom_point() +
-    scale_color_manual(values= c("darkgray", "firebrick")) +
-    scale_shape_manual(values  = c(16,17)) +
+    scale_color_manual(values= c("darkgray", "firebrick", "steelblue", "darkolivegreen4")) +
+    scale_shape_manual(values  = c(16,17,16,18)) +
     scale_size_manual(values = c(3,5)) +
     facet_wrap(FeatureType ~ .) +
     xlab("") + ylab("") + guides(fill=FALSE) +
@@ -764,4 +770,47 @@ scatterplotDistractingGridlines <- function(filename='./data/iouzipcodes2011.csv
     ggsave(filename, width=3.5, height=5)
     system(paste('open',filename))
   }
+}
+
+
+compareDistribPlots <- function(outputPDF = F) {
+  bxplot <- ggplot(iris, aes(x=Species, y=Petal.Length, fill=Species)) + 
+    geom_boxplot() +
+    scale_fill_brewer(palette="Set1") +
+    ylab("Peta Length (mm)") +
+    xlab("Iris Flower Species") +
+    ggtitle("Boxplot of Iris Flowers") +
+    theme_bw() +
+    theme(text=element_text(family="Times", size=12),
+          legend.position = "none",
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank()) 
+  
+  voplot <- ggplot(iris, aes(x=Species, y=Petal.Length, fill=Species)) + 
+    geom_violin() +
+    scale_fill_brewer(palette="Set1") +
+    ylab("Peta Length (mm)") +
+    xlab("Iris Flower Species") +
+    ggtitle("Violin of Iris Flowers") +
+    theme_bw() +
+    theme(text=element_text(family="Times", size=12),
+          legend.position = "none",
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.background = element_blank()) 
+  
+  # Make a 2x1 grid of the two plots
+  p <- arrangeGrob(bxplot, voplot, nrow=1, ncol=2)
+  
+  # Produce the plot in RStudio
+  print(p)
+  
+  # If the caller wants to produce a PDF, do so
+  if (outputPDF) {
+    filename = './figures/sect4-boxviolinplot.pdf'
+    ggsave(filename, p, width=6, height=3)
+    system(paste('open',filename))
+  }
+  
 }
