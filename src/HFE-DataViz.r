@@ -344,8 +344,8 @@ crimeContextLinePlot <- function(filename='./data/fbi-crime-1996-2015.csv',
     annotate("text",2005,7.75,vjust=0,label="Murder Rate of Bolivia, 2011", color="black") +        
     geom_hline(yintercept=3.7, linetype="dashed", color="black") +
     annotate("text",2005,3.75,vjust=0,label="Murder Rate of Chile, 2011", color="black")  +
-    annotate("text", 1996, 4.5, hjust=0, label="The U.S. Murder Rate was the lowest in the last\n100 years in 1955, when it was 4.5 per 100K people") +
-    ggtitle("Murder in the U.S. is at an Historic Low")
+    annotate("text", 1996, 4.5, hjust=0, label="Modern U.S. murder rates are comparable \nto 1955, when it was 4.5 per 100K people") +
+    ggtitle("Murder in the U.S. is at an Historic Low")  #FOOO
   
   # Produce the plot in RStudio
   print(p)
