@@ -15,6 +15,20 @@ library(reshape2)
 library(MASS)
 library(gridExtra)
 
+# ------------------------------------------------------------------
+#   Output Related Functions & Definitions
+# ------------------------------------------------------------------
+
+# Indicate what kind of output format for the plots
+#fileExtension = 'pdf'
+fileExtension = 'svg'
+
+# On a Mac, here's how we might preview this:
+showFigure <- function(filename) {
+  # Uncomment one of these, if you want to do this ...
+  #system(paste('open -a Preview ', filename))
+  #system(paste('inkscape ', filename))
+}
 
 # ------------------------------------------------------------------
 #   Data Loading Functions
@@ -124,7 +138,7 @@ generatePAFeatures <- function(numPoints, feature) {
 # Make a heatmap where one axis are the sensors and the other is the folded
 # categories of error measure and strategy
 makeDLTimeSeriesHeatmapPlot <- function(dataFilename="./data/88.csv", 
-                                        outputPDF=FALSE) {
+                                        outputFigure=FALSE) {
   dataset <- getDLTimeSeriesData(dataFilename)
   p <- ggplot(dataset, aes(CaseID, MethodAndClass)) +
     geom_tile(aes(fill=factor(Rank)), color="white") +
@@ -145,11 +159,11 @@ makeDLTimeSeriesHeatmapPlot <- function(dataFilename="./data/88.csv",
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    pdfFilename = "./figures/sect2-DLTimeSeries.pdf"
-    ggsave(pdfFilename, width=18, height=8)
-    system(paste('open', pdfFilename))
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste("./figures/Fig2.1_DLTimeSeries",fileExtension,sep='.')
+    ggsave(filename, width=18, height=8)
+    showFigure(filename)
   }
 }
 
@@ -158,7 +172,7 @@ makeDLTimeSeriesHeatmapPlot <- function(dataFilename="./data/88.csv",
 # over time for a given name.
 compareSSNNamesSexFixedAreaPlot <- function(filename='./data/ssnNames.csv', 
                                             babyName=c('Kendall'),
-                                            outputPDF=F) {
+                                            outputFigure=F) {
   # Get SSN data associated with the selected name
   ssnDataReturn <- getCorrectedFilteredSSNNameData(filename, babyName)
   nameData <- ssnDataReturn[[1]]
@@ -188,11 +202,11 @@ compareSSNNamesSexFixedAreaPlot <- function(filename='./data/ssnNames.csv',
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = paste('./figures/sect2-',tolower(babyName),'1.pdf',sep='')
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig2.2_',tolower(babyName),'1.',fileExtension,sep='')
     ggsave(filename, width=13, height=6)
-    system(paste('open',filename))
+    showFigure(filename)
   }
   
   return(p)
@@ -203,7 +217,7 @@ compareSSNNamesSexFixedAreaPlot <- function(filename='./data/ssnNames.csv',
 # named with a given name over time.
 compareSSNNamesSexCountLinePlot <- function(filename='./data/ssnNames.csv', 
                                             babyName=c('Kendall'),
-                                            outputPDF=F,
+                                            outputFigure=F,
                                             doPlot=T) {
   
   # Get SSN data associated with the selected name
@@ -229,11 +243,11 @@ compareSSNNamesSexCountLinePlot <- function(filename='./data/ssnNames.csv',
   if (doPlot)
     print(p)
   
-  # If the caller wants to produce a PDF, do so 
-  if (outputPDF) {
-    filename = paste('./figures/sect2-',tolower(babyName),'2.pdf',sep='')
+  # If the caller wants to produce an output file, do so 
+  if (outputFigure) {
+    filename = paste('./figures/Fig2.3_',tolower(babyName),'2.',fileExtension,sep='')
     ggsave(filename, width=13, height=6)
-    system(paste('open',filename))
+    showFigure(filename)
   }
   
   # Return the plot for later annotation ...
@@ -245,7 +259,7 @@ compareSSNNamesSexCountLinePlot <- function(filename='./data/ssnNames.csv',
 # named with a given name over time, including some very specific annotations.
 compareSSNNamesSexCountLinePlotWithAnnotations <- function(filename='./data/ssnNames.csv', 
                                                            babyName=c('Kendall'),
-                                                           outputPDF=F) {
+                                                           outputFigure=F) {
   
   # Get the line plot object  
   plotResults <- compareSSNNamesSexCountLinePlot(filename, babyName, F, F)
@@ -270,11 +284,11 @@ compareSSNNamesSexCountLinePlotWithAnnotations <- function(filename='./data/ssnN
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = paste('./figures/sect2-',tolower(babyName),'3.pdf',sep='')
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig2.5_',tolower(babyName),'3.', fileExtension,sep='')
     ggsave(filename, width=13, height=6)
-    system(paste('open',filename))
+    showFigure(filename)
   }
 }
 
@@ -285,7 +299,7 @@ smallmultSSNNamesSexFixedAreaPlot <- function(filename='./data/ssnNames.csv',
                                               babyName=c('Kendall', 'Morgan', 'Riley',
                                                          'Taylor', 'Sidney',
                                                          'Indiana'),#,  'Clarke', 'Tyler'),
-                                              outputPDF=F) {
+                                              outputFigure=F) {
   # Get SSN data associated with the selected name
   ssnDataReturn <- getCorrectedFilteredSSNNameData(filename, babyName)
   nameData <- ssnDataReturn[[1]]
@@ -320,11 +334,11 @@ smallmultSSNNamesSexFixedAreaPlot <- function(filename='./data/ssnNames.csv',
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = paste('./figures/sect2-',tolower(babyName),'4.pdf',sep='')
-    ggsave(filename, device="pdf", width=13, height=6)
-    system(paste('open',filename))
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig2.4_',tolower(babyName),'4.', fileExtension, sep='')
+    ggsave(filename, device=fileExtension, width=13, height=6)
+    showFigure(filename)
   }
 }
 
@@ -332,7 +346,7 @@ smallmultSSNNamesSexFixedAreaPlot <- function(filename='./data/ssnNames.csv',
 # Make an annotated line plot showing how the murder rate has evolved over time
 # in the US.
 crimeContextLinePlot <- function(filename='./data/fbi-crime-1996-2015.csv', 
-                                 outputPDF=F) {
+                                 outputFigure=F) {
   crime <- read.csv(filename, header=T)
   
   p<-  ggplot(arrange(crime, Year), aes(x=Year, y=Murder.and..nonnegligent..manslaughter..rate.)) +
@@ -350,11 +364,11 @@ crimeContextLinePlot <- function(filename='./data/fbi-crime-1996-2015.csv',
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = './figures/sect2-crime.pdf'
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig2.6_crime', fileExtension, sep='.')
     ggsave(filename, width=13, height=6)
-    system(paste('open',filename))
+    showFigure(filename)
   }
 }
 
@@ -367,7 +381,7 @@ crimeContextLinePlot <- function(filename='./data/fbi-crime-1996-2015.csv',
 # This function generates the plot for showing pre-attentive processing
 # for color, shape, and size.
 preattentiveFeatures <- function(numPoints=30,
-                                 outputPDF=F) {
+                                 outputFigure=F) {
   # Get the each dataset and glue them all together into one
   psDataset <- rbind(generatePAFeatures(numPoints, "Color"),
                      generatePAFeatures(numPoints, "Shape"),
@@ -396,17 +410,17 @@ preattentiveFeatures <- function(numPoints=30,
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = './figures/sect3-preattentive.pdf'
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig3.1_preattentive', fileExtension, sep='.')
     ggsave(filename, width=8, height=6)
-    system(paste('open',filename))
+    showFigure(filename)
   }
 }
 
 
 badMarriageRateExample <- function(filename='./data/marriage-rates.csv',
-                                   outputPDF=F) {
+                                   outputFigure=F) {
   # Read the marriage rate data and format it
   marriage = read.csv(filename,header=T)
   marriage = mutate(marriage,
@@ -440,17 +454,17 @@ badMarriageRateExample <- function(filename='./data/marriage-rates.csv',
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = './figures/sect3-badmarriagerate.pdf'
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig3.2_badmarriagerate', fileExtension, sep='.')
     ggsave(filename, width=8, height=6)
-    system(paste('open',filename))
+    showFigure(filename)
   }
 }
 
 
 betterMarriageRateExample <- function(filename='./data/marriage-rates.csv',
-                                      outputPDF=F) {
+                                      outputFigure=F) {
   # Read the marriage rate data and format it
   marriage = read.csv(filename,header=T)
   marriage = mutate(marriage,
@@ -487,16 +501,16 @@ betterMarriageRateExample <- function(filename='./data/marriage-rates.csv',
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = './figures/sect3-bettermarriagerate.pdf'
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig3.3_bettermarriagerate', fileExtension, sep='.')
     ggsave(filename, width=8, height=6)
-    system(paste('open',filename))
+    showFigure(filename)
   }
 }
 
 
-positionClevelandEg <- function(outputPDF=F) {
+positionClevelandEg <- function(outputFigure=F) {
   # Use the UScereal dataset from R's MASS library
   UScereal$brand <- rownames(UScereal)
   
@@ -511,16 +525,16 @@ positionClevelandEg <- function(outputPDF=F) {
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = './figures/sect3-positioncleveland.pdf'
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig3.4_positioncleveland', fileExtension, sep='.')
     ggsave(filename, width=8, height=6)
-    system(paste('open',filename))
+    showFigure(filename)
   }
 }
 
 
-lengthClevelandEg <- function(outputPDF=F) {
+lengthClevelandEg <- function(outputFigure=F) {
   # Makeup some fake data to demonstrate this
   dat <- data.frame(Student=c("Jerry","Phil","Bruce","Micky","Robert"),
                     Position=c(3,5,4.1,4.3,2.8),
@@ -539,16 +553,16 @@ lengthClevelandEg <- function(outputPDF=F) {
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = './figures/sect3-lengthcleveland.pdf'
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig3.5_lengthcleveland', fileExtension, sep='.')
     ggsave(filename, width=8, height=6)
-    system(paste('open',filename))
+    showFigure(filename)
   }
 }
 
 
-arcClevelandEg <- function(outputPDF=F) {
+arcClevelandEg <- function(outputFigure=F) {
   # Makeup some fake data to demonstrate this
   grades <- data.frame(Grade=c("A","B","C","D","F"),
                        Count=c(9,10,9,3,2))
@@ -570,17 +584,17 @@ arcClevelandEg <- function(outputPDF=F) {
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = './figures/sect3-arccleveland.pdf'
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig3.6left_arccleveland', fileExtension, sep='.')
     ggsave(filename, width=4, height=3)
-    system(paste('open',filename))
+    showFigure(filename)
   }
 }
 
 
 
-altarcClevelandEg <- function(outputPDF=F) {
+altarcClevelandEg <- function(outputFigure=F) {
   # Makeup some fake data to demonstrate this
   grades <- data.frame(Grade=c("A","B","C","D","F"),
                        Count=c(9,10,9,3,2))
@@ -600,17 +614,17 @@ altarcClevelandEg <- function(outputPDF=F) {
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = './figures/sect3-altarccleveland.pdf'
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig3.6right_altarccleveland', fileExtension, sep='.')
     ggsave(filename, width=4, height=3)
-    system(paste('open',filename))
+    showFigure(filename)
   }
 }
 
 
 barplotBaselineExampleGood <- function(filename='./data/bls-welfare-Q109-Q311.csv',
-                                       outputPDF=F) {
+                                       outputFigure=F) {
   # Read the marriage rate data and format it
   welfare <- arrange(read.csv(filename,header=T), QuarterNum)
 
@@ -624,17 +638,17 @@ barplotBaselineExampleGood <- function(filename='./data/bls-welfare-Q109-Q311.cs
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = './figures/sect3-blswelfaregood.pdf'
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig3.7top_blswelfaregood', fileExtension, sep='.')
     ggsave(filename, width=6, height=2.5)
-    system(paste('open',filename))
+    showFigure(filename)
   }
 }
 
 
 barplotBaselineExampleBad <- function(filename='./data/bls-welfare-Q109-Q311.csv',
-                                      outputPDF=F) {
+                                      outputFigure=F) {
   # Read the marriage rate data and format it
   welfare <- arrange(read.csv(filename,header=T), QuarterNum)
   
@@ -650,11 +664,11 @@ barplotBaselineExampleBad <- function(filename='./data/bls-welfare-Q109-Q311.csv
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = './figures/sect3-blswelfarebad.pdf'
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig3.7bottom_blswelfarebad', fileExtension, sep='.')
     ggsave(filename, width=6, height=2.5)
-    system(paste('open',filename))
+    showFigure(filename)
   }
 }
 
@@ -662,7 +676,7 @@ barplotBaselineExampleBad <- function(filename='./data/bls-welfare-Q109-Q311.csv
 
 
 barplotClearGridlines <- function(filename='./data/iouzipcodes2011.csv',
-                                      outputPDF=F) {
+                                      outputFigure=F) {
   # Load the data from the website, ignore the first few commented lines
   energy.raw <- read.csv(filename, comment.char="#")
   
@@ -709,18 +723,18 @@ barplotClearGridlines <- function(filename='./data/iouzipcodes2011.csv',
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = './figures/sect3-barplotcleargrid.pdf'
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig3.26right_barplotcleargrid', fileExtension, sep='.')
     ggsave(filename, width=3.5, height=5)
-    system(paste('open',filename))
+    showFigure(filename)
   }
 }
 
 
 
 scatterplotDistractingGridlines <- function(filename='./data/iouzipcodes2011.csv',
-                                            outputPDF=F) {
+                                            outputFigure=F) {
   # Load the data from the website, ignore the first few commented lines
   energy.raw <- read.csv(filename, comment.char="#")
   
@@ -764,16 +778,16 @@ scatterplotDistractingGridlines <- function(filename='./data/iouzipcodes2011.csv
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = './figures/sect3-scatterplotclutteredgrid.pdf'
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig3.26left_scatterplotclutteredgrid', fileExtension, sep='.')
     ggsave(filename, width=3.5, height=5)
-    system(paste('open',filename))
+    showFigure(filename)
   }
 }
 
 
-compareDistribPlots <- function(outputPDF = F) {
+compareDistribPlots <- function(outputFigure = F) {
   bxplot <- ggplot(iris, aes(x=Species, y=Petal.Length, fill=Species)) + 
     geom_boxplot() +
     scale_fill_brewer(palette="Set1") +
@@ -806,11 +820,34 @@ compareDistribPlots <- function(outputPDF = F) {
   # Produce the plot in RStudio
   print(p)
   
-  # If the caller wants to produce a PDF, do so
-  if (outputPDF) {
-    filename = './figures/sect4-boxviolinplot.pdf'
+  # If the caller wants to produce an output file, do so
+  if (outputFigure) {
+    filename = paste('./figures/Fig4.4_boxviolinplot', fileExtension, sep='.')
     ggsave(filename, p, width=6, height=3)
-    system(paste('open',filename))
+    showFigure(filename)
   }
   
+}
+
+
+
+produceAllPlots <- function() {
+  makeDLTimeSeriesHeatmapPlot(outputFigure=T)
+  compareSSNNamesSexFixedAreaPlot(outputFigure=T)
+  compareSSNNamesSexCountLinePlot(outputFigure=T)
+  compareSSNNamesSexCountLinePlotWithAnnotations(outputFigure=T)
+  smallmultSSNNamesSexFixedAreaPlot(outputFigure=T)
+  crimeContextLinePlot(outputFigure=T)
+  preattentiveFeatures(outputFigure=T)
+  badMarriageRateExample(outputFigure=T)
+  betterMarriageRateExample(outputFigure=T)
+  positionClevelandEg(outputFigure=T)
+  lengthClevelandEg(outputFigure=T)
+  arcClevelandEg(outputFigure=T)
+  altarcClevelandEg(outputFigure=T)
+  barplotBaselineExampleGood(outputFigure=T)
+  barplotBaselineExampleBad(outputFigure=T)
+  barplotClearGridlines(outputFigure=T)
+  scatterplotDistractingGridlines(outputFigure=T)
+  compareDistribPlots(outputFigure=T)
 }
